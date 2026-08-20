@@ -1,7 +1,7 @@
 {
-  "name": "twin-manifest-web3-social",
+  "name": "dili-manifest-dlicom",
   "version": "2.4.0",
-  "description": "Twin Manifest - Dlicom Web3 Social Platform Cyber-Zine Application",
+  "description": "Dili Manifest Studio - Sovereign Digital Twin for Dlicom Community",
   "main": "index.html",
   "scripts": {
     "dev": "vite",

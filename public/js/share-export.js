@@ -75,7 +75,7 @@ const ShareKit = (function() {
 
     ctx.font = 'bold 36px "Space Grotesk", sans-serif';
     ctx.fillStyle = '#ffffff';
-    ctx.fillText("TWIN MANIFEST", textStartX, 132);
+    ctx.fillText("DILI MANIFEST", textStartX, 132);
 
     ctx.font = 'bold 18px "JetBrains Mono", monospace';
     ctx.fillStyle = colorTheme;
@@ -283,7 +283,7 @@ const ShareKit = (function() {
 
     const twinManifestLogo = new Image();
     twinManifestLogo.crossOrigin = "anonymous";
-    twinManifestLogo.src = "assets/twin-manifest-logo.png";
+    twinManifestLogo.src = "assets/dili-manifest-logo.png";
 
     const dlicomLogo = new Image();
     dlicomLogo.crossOrigin = "anonymous";
@@ -355,7 +355,7 @@ const ShareKit = (function() {
       const roleName = options.roleName || (options.roleInfo ? options.roleInfo.name : 'Dliever');
       const discordUser = options.discordUsername || 'Community Member';
 
-      const tweetText = `Manifested my Sovereign Digital Twin with @DlicomApp! 🔮\n\nDiscord ID: ${discordUser} with Highest Role: ${roleName}\n\nMade via Twin Manifest Studio by @Crypto_Atanu\n\n#Dlicom #TwinManifest`;
+      const tweetText = `Manifested my Sovereign Dili Twin with @DlicomApp! 🔮\n\nDiscord ID: ${discordUser} with Highest Role: ${roleName}\n\nMade via Dili Manifest Studio by @Crypto_Atanu\n\n#Dlicom #DiliManifest`;
 
       const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
       window.open(url, '_blank');

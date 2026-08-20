@@ -1,8 +1,8 @@
-# Twin Manifest Studio 🔮
+# Dili Manifest Studio 🔮
 
 > **Manifest your Sovereign Digital Twin with @DlicomApp**
 
-Twin Manifest Studio is an interactive cyber-themed web application built for the **Dlicom Community**. It allows community members to authenticate via Discord, verify their server role, pull real-time Dlicom X analytics, customize their 3D mascot avatar, and export high-resolution manifest cards.
+Dili Manifest Studio is an interactive cyber-themed web application built for the **Dlicom Community**. It allows community members to authenticate via Discord, verify their server role, pull real-time Dlicom X analytics, customize their 3D mascot avatar, and export high-resolution manifest cards.
 
 ---
 
@@ -33,8 +33,8 @@ Twin Manifest Studio is an interactive cyber-themed web application built for th
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/Nathbabu/twin_manifest_dlicom.git
-cd twin_manifest_dlicom
+git clone https://github.com/Nathbabu/dili_manifest_dlicom.git
+cd dili_manifest_dlicom
 ```
 
 ### 2. Install dependencies

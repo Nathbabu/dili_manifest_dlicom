@@ -646,17 +646,17 @@ const server = http.createServer(async (req, res) => {
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Twin Manifest // Dlicom Digital Twin</title>
+  <title>Dili Manifest // Dlicom Digital Twin</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@DlicomApp" />
   <meta name="twitter:creator" content="@DlicomApp" />
-  <meta name="twitter:title" content="Twin Manifest // Sovereign Digital Twin" />
+  <meta name="twitter:title" content="Dili Manifest // Sovereign Digital Twin" />
   <meta name="twitter:description" content="Manifested my Sovereign Digital Twin in the Dlicom Community! 🔮" />
   <meta name="twitter:image" content="${imgUrl}" />
   <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="Twin Manifest // Dlicom Community" />
-  <meta property="og:title" content="Twin Manifest // Sovereign Digital Twin" />
+  <meta property="og:site_name" content="Dili Manifest // Dlicom Community" />
+  <meta property="og:title" content="Dili Manifest // Sovereign Digital Twin" />
   <meta property="og:description" content="Manifested my Sovereign Digital Twin in the Dlicom Community! 🔮" />
   <meta property="og:image" content="${imgUrl}" />
   <meta property="og:image:width" content="1200" />
@@ -670,7 +670,7 @@ const server = http.createServer(async (req, res) => {
   </style>
 </head>
 <body>
-  <h2 style="letter-spacing: 2px; text-transform: uppercase; margin-bottom: 5px;">✦ Twin Manifest // Dlicom ✦</h2>
+  <h2 style="letter-spacing: 2px; text-transform: uppercase; margin-bottom: 5px;">✦ Dili Manifest // Dlicom ✦</h2>
   <p style="color: #83958c; font-size: 14px; margin-top: 0;">Sovereign Digital Twin Card</p>
   <img class="card-img" src="${imgUrl}" alt="Manifest Card" />
   <div>
@@ -743,7 +743,7 @@ const server = http.createServer(async (req, res) => {
 if (!process.env.VERCEL) {
   server.listen(PORT, () => {
     console.log(`\n======================================================`);
-    console.log(`  DLICOM TWIN MANIFEST SERVER RUNNING AT: http://localhost:${PORT}`);
+    console.log(`  DLICOM DILI MANIFEST SERVER RUNNING AT: http://localhost:${PORT}`);
     console.log(`  TARGET GUILD: Dlicom Official (ID: ${DLICOM_GUILD_ID})`);
     console.log(`  DISCORD BOT INTENT: ${process.env.DISCORD_BOT_TOKEN ? 'CONFIGURED (LIVE)' : 'NOT CONFIGURED'}`);
     console.log(`======================================================\n`);
