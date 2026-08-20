@@ -1,4 +1,4 @@
-// Twin Manifest - Clean Data Store (25 Character Matrix & Discord Role Colors)
+// Dili Manifest - Clean Data Store (25 Character Matrix & Discord Role Colors)
 const TWIN_STUDIO_DATA = {
   // Default clean state
   initialUser: {

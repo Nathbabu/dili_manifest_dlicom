@@ -1,4 +1,4 @@
-// Twin Manifest - Full-Stack Server with Real Discord Bot & Twitter API v2 Integration
+// Dili Manifest - Full-Stack Server with Real Discord Bot & Twitter API v2 Integration
 const http = require('http');
 const fs = require('fs');
 const path = require('path');

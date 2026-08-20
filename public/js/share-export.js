@@ -1,4 +1,4 @@
-// Twin Manifest - Single Page Canvas Exporter & Social Dispatcher (25 Character Matrix)
+// Dili Manifest - Single Page Canvas Exporter & Social Dispatcher (25 Character Matrix)
 const ShareKit = (function() {
 
   function renderCardToCanvas(options) {
@@ -63,7 +63,7 @@ const ShareKit = (function() {
     ctx.fillRect(1160 - corner, 1552, corner, 8);
     ctx.fillRect(1152, 1560 - corner, 8, corner);
 
-    // 5. Header: Twin Manifest Logo & Dlicom Official Logo
+    // 5. Header: Dili Manifest Logo & Dlicom Official Logo
     if (options.twinManifestLogo && options.twinManifestLogo.complete) {
       ctx.drawImage(options.twinManifestLogo, 90, 100, 64, 64);
       ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';

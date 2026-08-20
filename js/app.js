@@ -1,4 +1,4 @@
-// Twin Manifest - Single-Page Controller (25-Character Matrix + LocalStorage Persistence)
+// Dili Manifest - Single-Page Controller (25-Character Matrix + LocalStorage Persistence)
 document.addEventListener('DOMContentLoaded', () => {
   // Initialize Background Shader
   CyberShader.init('cyber-shader-canvas');
