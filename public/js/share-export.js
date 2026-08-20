@@ -404,7 +404,8 @@ const ShareKit = (function() {
     downloadCard: function(options) {
       loadAssetsAndRender(options, (canvas) => {
         const link = document.createElement('a');
-        link.download = `twin-manifest-${options.twinId || 'card'}.png`;
+        const cleanId = String(options.twinId || 'card').toLowerCase().replace(/[^a-z0-9-_]/g, '-');
+        link.download = `dili-manifest-${cleanId}.png`;
         link.href = canvas.toDataURL('image/png');
         link.click();
         CyberAudio.success();
