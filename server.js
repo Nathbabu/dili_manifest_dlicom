@@ -739,12 +739,14 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-server.listen(PORT, () => {
-  console.log(`\n======================================================`);
-  console.log(`  DLICOM TWIN MANIFEST SERVER RUNNING AT: http://localhost:${PORT}`);
-  console.log(`  TARGET GUILD: Dlicom Official (ID: ${DLICOM_GUILD_ID})`);
-  console.log(`  INVITE URL: https://discord.com/invite/${DLICOM_INVITE_CODE}`);
-  console.log(`  DISCORD BOT INTENT: ${process.env.DISCORD_BOT_TOKEN ? 'CONFIGURED (LIVE)' : 'NOT CONFIGURED'}`);
-  console.log(`  TWITTER API v2: ${process.env.TWITTER_BEARER_TOKEN ? 'CONFIGURED (LIVE)' : 'NOT CONFIGURED'}`);
-  console.log(`======================================================\n`);
-});
+if (!process.env.VERCEL) {
+  server.listen(PORT, () => {
+    console.log(`\n======================================================`);
+    console.log(`  DLICOM TWIN MANIFEST SERVER RUNNING AT: http://localhost:${PORT}`);
+    console.log(`  TARGET GUILD: Dlicom Official (ID: ${DLICOM_GUILD_ID})`);
+    console.log(`  DISCORD BOT INTENT: ${process.env.DISCORD_BOT_TOKEN ? 'CONFIGURED (LIVE)' : 'NOT CONFIGURED'}`);
+    console.log(`======================================================\n`);
+  });
+}
+
+module.exports = server;
