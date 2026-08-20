@@ -279,7 +279,7 @@
           </div>
 
           <!-- THE MANIFEST CARD (Rendered Target) -->
-          <div id="manifest-card-wrapper" class="relative w-full max-w-[620px] mx-auto border-2 border-[#3f3f46] bg-[#060608] p-6 sm:p-7 md:p-8 shadow-[0_0_50px_rgba(0,0,0,0.9)] transition-all duration-300">
+          <div id="manifest-card-wrapper" class="relative w-full max-w-[640px] mx-auto border-2 border-[#3f3f46] bg-[#060608] p-5 sm:p-6 md:p-7 shadow-[0_0_50px_rgba(0,0,0,0.9)] transition-all duration-300">
             
             <!-- Card Header with Dili Manifest Logo and Dlicom Official Logo -->
             <div class="flex justify-between items-center mb-4 border-b border-[#27272a] pb-3">
@@ -306,7 +306,7 @@
             </div>
 
                         <!-- Mascot Image Viewport -->
-            <div id="card-mascot-container" class="w-full aspect-[4/3] bg-[#0a0a0e] border border-[#27272a] overflow-hidden mb-4 relative flex items-center justify-center p-2 transition-all duration-300">
+            <div id="card-mascot-container" class="w-full aspect-[16/10] bg-[#0a0a0e] border border-[#27272a] overflow-hidden mb-4 relative flex items-center justify-center p-2 transition-all duration-300">
               
               <!-- 1. Unauthenticated 2x2 Collage of all 4 Rarities -->
               <div id="card-mascot-collage" class="grid grid-cols-2 grid-rows-2 gap-2 w-full h-full p-1 z-10">
@@ -358,40 +358,40 @@
               <div class="scanline"></div>
             </div>
 
-            <!-- Identity Matrix Grid -->
-            <div class="grid grid-cols-2 gap-2.5 font-mono-tech text-xs bg-[#0b0b0e] border border-[#27272a] p-3 mb-3">
+            <!-- Identity Matrix Grid (Widescreen 3-Column Layout Matching Ultra-HD Canvas) -->
+            <div class="grid grid-cols-3 gap-2.5 sm:gap-3 font-mono-tech text-xs bg-[#0b0b0e] border border-[#27272a] p-3 sm:p-4 mb-3.5">
+              <!-- Col 1: Discord -->
               <div class="border-l-2 border-discord-blurple pl-2">
-                <div class="text-[9px] text-on-surface-variant uppercase flex items-center gap-1">
-                  <span>Discord</span>
-                </div>
-                <div id="card-discord-handle" class="text-white font-bold truncate">Not Connected</div>
+                <div class="text-[9px] text-on-surface-variant uppercase">Discord</div>
+                <div id="card-discord-handle" class="text-white font-bold text-xs truncate">Not Connected</div>
               </div>
 
+              <!-- Col 2: X / Twitter -->
               <div class="border-l-2 border-white pl-2">
-                <div class="text-[9px] text-on-surface-variant uppercase flex items-center gap-1">
-                  <span>X / Twitter</span>
-                </div>
-                <div id="card-x-handle" class="text-white font-bold truncate">Not Entered</div>
+                <div class="text-[9px] text-on-surface-variant uppercase">X / Twitter</div>
+                <div id="card-x-handle" class="text-white font-bold text-xs truncate">Not Entered</div>
               </div>
 
-              <div class="border-l-2 border-[#27272a] pl-2 mt-1">
+              <!-- Col 3: Highest Role -->
+              <div class="border-l-2 border-[#27272a] pl-2">
                 <div class="text-[9px] text-on-surface-variant uppercase">Highest Role</div>
-                <div id="card-role-name" class="font-display font-bold text-sm text-on-surface-variant truncate">NO ROLE</div>
+                <div id="card-role-name" class="font-display font-bold text-xs sm:text-sm text-on-surface-variant truncate">NO ROLE</div>
               </div>
 
-              <div class="border-l-2 border-[#27272a] pl-2 mt-1">
+              <!-- Row 2 / Col 1: Joined Date -->
+              <div class="border-l-2 border-[#27272a] pl-2 pt-1 border-t border-[#27272a]/40">
                 <div class="text-[9px] text-on-surface-variant uppercase">Joined Dlicom</div>
                 <div id="card-joined-date" class="font-display font-bold text-xs text-on-surface-variant truncate">Unlinked</div>
               </div>
 
-              <div class="border-l-2 border-emerald-500 pl-2 mt-1">
-                <div class="text-[9px] text-on-surface-variant uppercase flex items-center justify-between pr-1">
-                  <span>Dlicom Impressions</span>
-                </div>
+              <!-- Row 2 / Col 2: Impressions -->
+              <div class="border-l-2 border-emerald-500 pl-2 pt-1 border-t border-[#27272a]/40">
+                <div class="text-[9px] text-on-surface-variant uppercase">Dlicom Impressions</div>
                 <div id="card-x-impressions" class="font-display font-bold text-xs text-emerald-400 truncate">--</div>
               </div>
 
-              <div class="border-l-2 border-cyan-500 pl-2 mt-1">
+              <!-- Row 2 / Col 3: Posts & Eng -->
+              <div class="border-l-2 border-cyan-500 pl-2 pt-1 border-t border-[#27272a]/40">
                 <div class="text-[9px] text-on-surface-variant uppercase">Dlicom Posts / Eng</div>
                 <div id="card-x-posts" class="font-display font-bold text-xs text-cyan-400 truncate">--</div>
               </div>
