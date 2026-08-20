@@ -1,0 +1,266 @@
+/* Cyber-Zine Manifest & Neon Brutalism Design Tokens */
+:root {
+  --bg-void: #050505;
+  --bg-surface: #131314;
+  --bg-surface-high: #1c1b1c;
+  --bg-surface-higher: #26262c;
+  --color-mint: #00ffc2;
+  --color-mint-dim: #00e1ab;
+  --color-pink: #ff00e5;
+  --color-purple: #9d00ff;
+  --color-gold: #ffd700;
+  --color-blue: #0066ff;
+  --color-text-main: #e5e2e1;
+  --color-text-muted: #83958c;
+  --border-outline: rgba(58, 74, 67, 0.4);
+}
+
+/* Base resets & typography */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--bg-void);
+  color: var(--color-text-main);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  overflow-x: hidden;
+}
+
+/* Space Grotesk & JetBrains Mono classes */
+.font-display {
+  font-family: 'Space Grotesk', sans-serif;
+}
+.font-mono-tech {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Cyber Grids & Textures */
+.grid-bg {
+  background-size: 28px 28px;
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+}
+
+.grid-bg-dense {
+  background-size: 16px 16px;
+  background-image:
+    linear-gradient(to right, rgba(0, 255, 194, 0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 255, 194, 0.07) 1px, transparent 1px);
+}
+
+/* Brutalist Offset Shadows & Borders */
+.brutalist-border {
+  border: 2px solid #2a2a2b;
+}
+
+.brutalist-btn {
+  position: relative;
+  transition: all 0.15s ease;
+  box-shadow: 4px 4px 0px 0px rgba(0, 255, 194, 0.9);
+}
+
+.brutalist-btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px 0px rgba(0, 255, 194, 1);
+}
+
+.brutalist-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0px 0px 0px 0px rgba(0, 255, 194, 1);
+}
+
+.brutalist-btn-pink {
+  box-shadow: 4px 4px 0px 0px rgba(255, 0, 229, 0.9);
+}
+.brutalist-btn-pink:hover {
+  box-shadow: 6px 6px 0px 0px rgba(255, 0, 229, 1);
+}
+
+.brutalist-btn-gold {
+  box-shadow: 4px 4px 0px 0px rgba(255, 215, 0, 0.9);
+}
+.brutalist-btn-gold:hover {
+  box-shadow: 6px 6px 0px 0px rgba(255, 215, 0, 1);
+}
+
+/* Neon Glows Matching Discord Role Colors */
+.glow-mint {
+  box-shadow: 0 0 20px rgba(0, 255, 194, 0.35), inset 0 0 10px rgba(0, 255, 194, 0.15);
+}
+
+.glow-pink {
+  box-shadow: 0 0 22px rgba(236, 73, 192, 0.45), inset 0 0 10px rgba(236, 73, 192, 0.2);
+}
+
+.glow-yellow {
+  box-shadow: 0 0 22px rgba(210, 232, 35, 0.45), inset 0 0 10px rgba(210, 232, 35, 0.2);
+}
+
+.glow-silver {
+  box-shadow: 0 0 25px rgba(226, 232, 240, 0.5), inset 0 0 12px rgba(255, 255, 255, 0.25);
+}
+
+.glow-purple {
+  box-shadow: 0 0 20px rgba(157, 0, 255, 0.4), inset 0 0 10px rgba(157, 0, 255, 0.2);
+}
+
+.glow-gold {
+  box-shadow: 0 0 25px rgba(255, 215, 0, 0.45), inset 0 0 12px rgba(255, 215, 0, 0.2);
+}
+
+.glow-blue {
+  box-shadow: 0 0 20px rgba(0, 102, 255, 0.4), inset 0 0 10px rgba(0, 102, 255, 0.2);
+}
+
+/* Scanline Effect */
+.scanline {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, rgba(0, 255, 194, 0.8), transparent);
+  animation: scan 4s linear infinite;
+  pointer-events: none;
+  z-index: 15;
+}
+
+.scanline-pink {
+  background: linear-gradient(90deg, transparent, rgba(255, 0, 229, 0.8), transparent);
+}
+
+@keyframes scan {
+  0% { top: 0%; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+/* Glitch Animations */
+@keyframes glitch-skew {
+  0% { transform: skew(0deg); }
+  20% { transform: skew(-4deg); }
+  40% { transform: skew(4deg); }
+  60% { transform: skew(-2deg); }
+  80% { transform: skew(2deg); }
+  100% { transform: skew(0deg); }
+}
+
+.glitch-hover:hover {
+  animation: glitch-skew 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+/* Ticker Animation */
+.ticker-wrap {
+  width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.ticker {
+  display: inline-block;
+  white-space: nowrap;
+  animation: ticker 35s linear infinite;
+}
+
+@keyframes ticker {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #09090b;
+}
+::-webkit-scrollbar-thumb {
+  background: #27272a;
+  border: 1px solid #3f3f46;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-mint);
+}
+
+/* Active navigation tab */
+.nav-tab.active {
+  color: var(--color-mint);
+  border-bottom: 2px solid var(--color-mint);
+}
+
+/* Sticker badge */
+.sticker-chip {
+  display: inline-flex;
+  align-items: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 8px;
+  font-size: 11px;
+}
+
+/* Nutrition label style box */
+.nutrition-label {
+  border: 2px solid #3f3f46;
+  background: #09090b;
+  font-family: 'JetBrains Mono', monospace;
+  padding: 12px;
+}
+.nutrition-label-header {
+  border-bottom: 3px solid #e5e2e1;
+  padding-bottom: 4px;
+  margin-bottom: 8px;
+}
+
+/* Pulse animation */
+@keyframes cyber-pulse {
+  0%, 100% { opacity: 0.9; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.98); }
+}
+.pulse-glow {
+  animation: cyber-pulse 2.5s ease-in-out infinite;
+}
+
+/* Toast container */
+#toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  pointer-events: none;
+}
+
+.toast {
+  pointer-events: auto;
+  min-width: 280px;
+  max-width: 400px;
+  background: #0e0e0f;
+  border-left: 4px solid var(--color-mint);
+  border-top: 1px solid #2a2a2b;
+  border-right: 1px solid #2a2a2b;
+  border-bottom: 1px solid #2a2a2b;
+  padding: 14px 18px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8);
+  transform: translateX(120%);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.toast.show {
+  transform: translateX(0);
+}
+
+.toast.toast-pink {
+  border-left-color: var(--color-pink);
+}
+
+.toast.toast-gold {
+  border-left-color: var(--color-gold);
+}

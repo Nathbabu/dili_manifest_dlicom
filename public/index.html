@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Twin Manifest // Dlicom Digital Twin Studio</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+  <!-- Tailwind Configuration -->
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface-deep": "#050505",
+            "surface": "#131314",
+            "surface-container-low": "#1c1b1c",
+            "surface-container": "#201f20",
+            "surface-container-high": "#2a2a2b",
+            "surface-container-highest": "#353436",
+            "dliever-pink": "#ec49c0",
+            "decoded-yellow": "#d2e823",
+            "dco-silver": "#e2e8f0",
+            "dliever-mint": "#00ffc2",
+            "decoded-pink": "#ff00e5",
+            "decoded-purple": "#9d00ff",
+            "dco-gold": "#ffd700",
+            "dco-electric-blue": "#0066ff",
+            "discord-blurple": "#5865F2",
+            "on-surface": "#e5e2e1",
+            "on-surface-variant": "#83958c",
+            "outline-variant": "#3a4a43"
+          },
+          fontFamily: {
+            "display": ["Space Grotesk", "sans-serif"],
+            "mono-tech": ["JetBrains Mono", "monospace"],
+            "body": ["Inter", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="bg-surface-deep text-on-surface font-body min-h-screen flex flex-col selection:bg-dliever-pink selection:text-surface-deep relative">
+
+  <!-- Ambient WebGL Shader Canvas -->
+  <div class="fixed inset-0 pointer-events-none z-0 opacity-30 mix-blend-screen">
+    <canvas id="cyber-shader-canvas" class="w-full h-full block"></canvas>
+  </div>
+
+  <!-- Top Navigation Bar -->
+  <header class="bg-[#0c0c10]/95 backdrop-blur-md border-b border-[#27272a] sticky top-0 z-50">
+    <div class="flex justify-between items-center px-4 md:px-10 w-full max-w-7xl mx-auto h-20">
+      
+      <!-- Brand Logo -->
+      <div class="flex items-center gap-3">
+        <img src="assets/twin-manifest-logo.png" alt="Twin Manifest Logo" class="w-10 h-10 object-contain rounded-lg border border-white/20 shadow-[0_0_15px_rgba(255,255,255,0.3)]" />
+        <div>
+          <div class="font-display font-bold text-lg md:text-xl tracking-tight text-white uppercase italic leading-none">
+            TWIN MANIFEST
+          </div>
+          <div class="font-mono-tech text-[10px] text-on-surface-variant tracking-widest uppercase">
+            DLICOM COMMUNITY STUDIO
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Sync Status Chips -->
+      <div class="hidden md:flex items-center gap-4 font-mono-tech text-xs">
+        <div id="top-discord-status" class="flex items-center gap-2 border border-[#27272a] bg-[#09090b] px-3 py-1.5 text-on-surface-variant">
+          Discord Unlinked
+        </div>
+        <div id="top-x-status" class="flex items-center gap-2 border border-[#27272a] bg-[#09090b] px-3 py-1.5 text-on-surface-variant">
+          X Unlinked
+        </div>
+      </div>
+
+      <!-- Audio & Shader Utilities -->
+      <div class="flex items-center gap-2.5">
+        <button id="btn-toggle-audio" class="p-2 border border-[#27272a] hover:border-white text-on-surface-variant hover:text-white transition-colors" title="Toggle Cyber Audio SFX">
+          <span class="material-symbols-outlined text-lg">volume_up</span>
+        </button>
+        <button id="btn-toggle-shader" class="p-2 border border-[#27272a] hover:border-white text-on-surface-variant hover:text-white transition-colors" title="Toggle WebGL Background Shader">
+          <span class="material-symbols-outlined text-lg">blur_on</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="flex-1 w-full max-w-7xl mx-auto px-4 md:px-10 py-8 relative z-10">
+    
+    <!-- Hero / Headline Matrix -->
+    <div class="mb-10 border-b border-[#27272a] pb-8">
+      <h1 class="font-display font-black text-3xl md:text-5xl lg:text-6xl text-white tracking-tight uppercase italic leading-none mb-3">
+        SOVEREIGN DIGITAL TWIN
+      </h1>
+      <p class="font-body text-sm md:text-base text-on-surface-variant max-w-3xl">
+        Connect your Dlicom Discord to verify your server role (<span class="text-[#ec49c0] font-bold">Dliever</span>, <span class="text-[#d2e823] font-bold">Dcoded</span>, or <span class="text-[#e2e8f0] font-bold">DCO</span>), unlock your exclusive character variants, and generate your high-res on-chain identity matrix card.
+      </p>
+    </div>
+
+    <!-- Main Two-Column Workflow Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      
+      <!-- ========================================================================= -->
+      <!-- LEFT COLUMN: CONTROLS & SELECTIONS -->
+      <!-- ========================================================================= -->
+      <div class="lg:col-span-6 flex flex-col gap-6">
+
+        <!-- 1. DISCORD ROLE VERIFICATION (1-CLICK OAUTH) -->
+        <div class="bg-[#0b0b0e] border border-[#27272a] p-5 md:p-6">
+          <div class="flex justify-between items-center border-b border-[#27272a] pb-3 mb-4">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-lg text-[#5865F2]">hub</span>
+              <h2 class="font-display font-bold text-base md:text-lg text-white uppercase">
+                1. DISCORD ROLE VERIFICATION
+              </h2>
+            </div>
+            <span class="font-mono-tech text-[10px] text-on-surface-variant uppercase">STEP 1: REQUIRED</span>
+          </div>
+
+          <!-- Connected Account Banner -->
+          <div class="bg-[#08080b] border border-[#27272a] p-3.5 flex items-center justify-between mb-4">
+            <div>
+              <div class="font-mono-tech text-[10px] text-on-surface-variant uppercase">Dlicom Discord Account</div>
+              <div id="discord-username-display" class="font-display font-bold text-base text-white">Not Connected</div>
+            </div>
+            <div class="flex items-center gap-3">
+              <div>
+                <div class="font-mono-tech text-[10px] text-on-surface-variant uppercase text-right">Detected Role</div>
+                <div id="discord-role-badge" class="font-mono-tech text-xs px-2.5 py-0.5 border border-[#3f3f46] text-on-surface-variant bg-[#27272a]/20 uppercase font-bold text-right">
+                  UNLINKED
+                </div>
+              </div>
+              <button id="btn-discord-disconnect" class="hidden text-xs font-mono-tech text-rose-400 hover:text-rose-300 border border-rose-500/30 hover:border-rose-400 px-2 py-1 bg-rose-500/10 uppercase transition-colors" title="Disconnect Discord Account">
+                Disconnect
+              </button>
+            </div>
+          </div>
+
+          <!-- 1-Click Real Discord OAuth2 Button -->
+          <div class="mb-4">
+            <button id="btn-oauth-discord" class="brutalist-btn w-full bg-[#5865F2] hover:bg-[#4752C4] text-white font-mono-tech font-bold text-xs py-3.5 px-4 uppercase flex items-center justify-center gap-2.5 transition-colors shadow-[0_0_20px_rgba(88,101,242,0.35)]">
+              <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.929 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.893.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
+              <span>CONNECT WITH DISCORD (1-CLICK OAUTH)</span>
+            </button>
+          </div>
+
+          <!-- List of verified roles in Dlicom Server -->
+          <div id="discord-server-roles-list"></div>
+
+          <p class="font-body text-xs text-on-surface-variant mt-3">
+            Roles in Dlicom are handpicked by moderators. If your role upgrades in Discord (<strong class="text-[#ec49c0]">Dliever</strong> → <strong class="text-[#d2e823]">Dcoded</strong> → <strong class="text-[#e2e8f0]">DCO</strong>), simply re-authenticate to upgrade your mascot automatically.
+          </p>
+        </div>
+
+        <!-- 2. X (TWITTER) USERNAME -->
+        <div class="bg-[#0b0b0e] border border-[#27272a] p-5 md:p-6">
+          <div class="flex justify-between items-center border-b border-[#27272a] pb-3 mb-4">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-lg text-white">alternate_email</span>
+              <h2 class="font-display font-bold text-base md:text-lg text-white uppercase">
+                2. X (TWITTER) USERNAME
+              </h2>
+            </div>
+            <span class="font-mono-tech text-[10px] text-[#ec49c0] font-bold uppercase">STEP 2: REQUIRED</span>
+          </div>
+
+          <div class="space-y-2">
+            <div class="relative">
+              <span class="absolute left-3.5 top-1/2 -translate-y-1/2 font-mono-tech text-xs text-[#666]">@</span>
+              <input id="x-direct-input" type="text" placeholder="Enter your X handle (e.g. username)..." value="" class="w-full bg-[#08080b] border border-[#27272a] pl-8 pr-3.5 py-3 font-mono-tech text-xs text-white placeholder:text-[#555] focus:outline-none focus:border-white transition-colors" />
+            </div>
+
+            <!-- Live Dlicom X Analytics from xerper.com -->
+            <div id="x-analytics-status" class="hidden mt-2 p-2.5 bg-[#09090d] border border-[#27272a] flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span id="x-analytics-summary" class="font-mono-tech text-xs text-white font-bold">Fetching Dlicom X stats...</span>
+              </div>
+              <span class="font-mono-tech text-[9px] text-[#83958c]">powered by xerper.com</span>
+            </div>
+
+            <p class="font-mono-tech text-[10px] text-on-surface-variant flex items-center justify-between">
+              <span>Required for card generation & Dlicom all-time analytics.</span>
+              <span class="text-[#83958c]">*Dlicom X stats fetched live via xerper.com</span>
+            </p>
+          </div>
+        </div>
+
+        <!-- 3. ROLE-EXCLUSIVE CHARACTER SELECTOR -->
+        <div class="bg-[#0b0b0e] border border-[#27272a] p-5 md:p-6">
+          <div class="flex justify-between items-center border-b border-[#27272a] pb-3 mb-4">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-lg text-[#00ffc2]">view_in_ar</span>
+              <h2 class="font-display font-bold text-base md:text-lg text-white uppercase">
+                3. ROLE CHARACTER SELECTOR
+              </h2>
+            </div>
+            <span id="armory-tier-badge" class="font-mono-tech text-[10px] text-on-surface-variant font-bold">CONNECT DISCORD TO UNLOCK</span>
+          </div>
+
+          <p id="character-selector-intro" class="font-mono-tech text-xs text-on-surface-variant mb-4">
+            Connect your Dlicom Discord account above. Your verified server role unlocks exclusive character variants. Click any character to equip it onto your Sovereign Manifest Card.
+          </p>
+
+          <!-- Dynamic Character Grid Container -->
+          <div id="character-designs-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <!-- Rendered dynamically by JS -->
+          </div>
+        </div>
+
+        <!-- 4. CUSTOM MANIFEST LORE / QUOTE -->
+        <div class="bg-[#0b0b0e] border border-[#27272a] p-5 md:p-6">
+          <div class="flex justify-between items-center border-b border-[#27272a] pb-3 mb-4">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-lg text-[#ec49c0]">format_quote</span>
+              <h2 class="font-display font-bold text-base md:text-lg text-white uppercase">
+                4. MANIFEST LORE / QUOTE
+              </h2>
+            </div>
+            <button id="btn-randomize-quote" class="font-mono-tech text-xs border border-[#27272a] hover:border-[#ec49c0] text-[#ec49c0] px-2.5 py-1 flex items-center gap-1 transition-colors">
+              <span>Randomize</span>
+              <span class="material-symbols-outlined text-xs">shuffle</span>
+            </button>
+          </div>
+
+          <input id="input-custom-quote" type="text" placeholder="Write your sovereign manifest quote..." class="w-full bg-[#08080b] border border-[#27272a] px-3.5 py-2.5 font-body text-xs text-white focus:outline-none focus:border-[#ec49c0] transition-colors" />
+        </div>
+
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- RIGHT COLUMN: LIVE SOVEREIGN MANIFEST CARD & EXPORT ACTIONS -->
+      <!-- ========================================================================= -->
+      <div class="lg:col-span-6 flex flex-col gap-6 sticky top-24">
+
+        <!-- Live Manifest Card Container -->
+        <div class="bg-[#0b0b0e] border border-[#27272a] p-5 md:p-7 flex flex-col items-center">
+          
+          <div class="w-full flex justify-between items-center border-b border-[#27272a] pb-3 mb-6">
+            <div class="font-mono-tech text-xs text-white font-bold flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-[#00ffc2] animate-pulse"></span>
+              LIVE SOVEREIGN MANIFEST CARD
+            </div>
+            <button id="btn-card-top-copy" class="font-mono-tech text-[10px] text-[#00ffc2] border border-[#00ffc2]/40 hover:border-[#00ffc2] bg-[#00ffc2]/10 hover:bg-[#00ffc2]/20 px-2.5 py-1 flex items-center gap-1.5 transition-colors cursor-pointer" title="Copy Card Image to Clipboard">
+              <span class="material-symbols-outlined text-xs">content_copy</span>
+              <span>COPY IMAGE</span>
+            </button>
+          </div>
+
+          <!-- THE MANIFEST CARD (Rendered Target) -->
+          <div id="manifest-card-wrapper" class="relative w-full max-w-[420px] mx-auto border-2 border-[#3f3f46] bg-[#060608] p-5 md:p-6 transition-all duration-300">
+            
+            <!-- Card Header with Twin Manifest Logo and Dlicom Official Logo -->
+            <div class="flex justify-between items-center mb-4 border-b border-[#27272a] pb-3">
+              <div class="flex items-center gap-2.5">
+                <img src="assets/twin-manifest-logo.png" alt="Twin Manifest Logo" class="w-8 h-8 object-contain rounded border border-white/20 shadow-[0_0_10px_rgba(255,255,255,0.2)]" />
+                <div>
+                  <div class="font-display font-black text-lg text-white uppercase italic tracking-tight leading-none">
+                    TWIN MANIFEST
+                  </div>
+                  <div class="font-mono-tech text-[9px] text-[#00ffc2] uppercase tracking-wider">
+                    DLICOM COMMUNITY
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <img src="assets/dlicom-logo.png" alt="Dlicom" class="w-5 h-5 object-contain filter drop-shadow-[0_0_6px_rgba(255,255,255,0.5)]" title="Dlicom Official Emblem" />
+                <div id="card-role-badge" class="font-mono-tech text-[10px] border border-[#3f3f46] text-on-surface-variant bg-[#27272a]/20 px-2.5 py-1 font-bold uppercase">
+                  UNLINKED CADET
+                </div>
+              </div>
+            </div>
+
+                        <!-- Mascot Image Viewport -->
+            <div id="card-mascot-container" class="w-full aspect-[4/3] bg-[#0a0a0e] border border-[#27272a] overflow-hidden mb-4 relative flex items-center justify-center p-2 transition-all duration-300">
+              
+              <!-- 1. Unauthenticated 2x2 Collage of all 4 Rarities -->
+              <div id="card-mascot-collage" class="grid grid-cols-2 grid-rows-2 gap-2 w-full h-full p-1 z-10">
+                <!-- 1. Cadet / No Role -->
+                <div class="relative bg-[#060608] border border-[#3f3f46]/50 overflow-hidden flex items-center justify-center p-1 group">
+                  <img src="assets/characters/cadet-mint.png" alt="No Role Mascot" class="w-full h-full object-contain filter drop-shadow-[0_0_6px_rgba(0,255,194,0.35)]" />
+                  <span class="absolute bottom-1 left-1 bg-black/90 border border-[#3f3f46] px-1.5 py-0.5 font-mono-tech text-[8px] text-[#83958c] font-bold uppercase">
+                    NO ROLE
+                  </span>
+                </div>
+                <!-- 2. Dliever -->
+                <div class="relative bg-[#060608] border border-[#ec49c0]/40 overflow-hidden flex items-center justify-center p-1 group">
+                  <img src="assets/characters/dliever-pink.png" alt="Dliever Mascot" class="w-full h-full object-contain filter drop-shadow-[0_0_6px_rgba(236,73,192,0.35)]" />
+                  <span class="absolute bottom-1 left-1 bg-black/90 border border-[#ec49c0]/60 px-1.5 py-0.5 font-mono-tech text-[8px] text-[#ec49c0] font-bold uppercase">
+                    DLIEVER
+                  </span>
+                </div>
+                <!-- 3. Dcoded -->
+                <div class="relative bg-[#060608] border border-[#d2e823]/40 overflow-hidden flex items-center justify-center p-1 group">
+                  <img src="assets/characters/decoded-yellow.png" alt="Dcoded Mascot" class="w-full h-full object-contain filter drop-shadow-[0_0_6px_rgba(210,232,35,0.35)]" />
+                  <span class="absolute bottom-1 left-1 bg-black/90 border border-[#d2e823]/60 px-1.5 py-0.5 font-mono-tech text-[8px] text-[#d2e823] font-bold uppercase">
+                    DCODED
+                  </span>
+                </div>
+                <!-- 4. DCO -->
+                <div class="relative bg-[#060608] border border-[#e2e8f0]/40 overflow-hidden flex items-center justify-center p-1 group">
+                  <img src="assets/characters/dco-cobalt-silver.png" alt="DCO Mascot" class="w-full h-full object-contain filter drop-shadow-[0_0_6px_rgba(226,232,240,0.35)]" />
+                  <span class="absolute bottom-1 left-1 bg-black/90 border border-[#e2e8f0]/60 px-1.5 py-0.5 font-mono-tech text-[8px] text-[#e2e8f0] font-bold uppercase">
+                    DCO
+                  </span>
+                </div>
+              </div>
+
+              <!-- 2. Authenticated Single Mascot Viewport (Hidden until Discord Connected) -->
+              <div id="card-mascot-single" class="hidden w-full h-full items-center justify-center relative z-10">
+                <img id="card-mascot-image" src="assets/characters/cadet-mint.png" alt="Mascot Avatar" class="h-full object-contain filter drop-shadow-[0_0_25px_rgba(255,255,255,0.12)] transition-all duration-300 relative z-10" />
+              </div>
+
+              <!-- Active Character Tag HUD -->
+              <div id="card-character-hud" class="absolute top-2 right-2 z-30 pointer-events-none">
+                <span id="card-character-hud-tag" class="font-mono-tech text-[9px] bg-black/80 border border-white/20 px-2 py-0.5 text-white font-bold uppercase">
+                  RARITY MATRIX
+                </span>
+              </div>
+
+              <!-- Ambient Glow Aura -->
+              <div id="card-mascot-aura" class="absolute inset-0 z-0 pointer-events-none opacity-30 transition-all duration-500"></div>
+
+              <div class="scanline"></div>
+            </div>
+
+            <!-- Identity Matrix Grid -->
+            <div class="grid grid-cols-2 gap-2.5 font-mono-tech text-xs bg-[#0b0b0e] border border-[#27272a] p-3 mb-3">
+              <div class="border-l-2 border-discord-blurple pl-2">
+                <div class="text-[9px] text-on-surface-variant uppercase flex items-center gap-1">
+                  <span>Discord</span>
+                </div>
+                <div id="card-discord-handle" class="text-white font-bold truncate">Not Connected</div>
+              </div>
+
+              <div class="border-l-2 border-white pl-2">
+                <div class="text-[9px] text-on-surface-variant uppercase flex items-center gap-1">
+                  <span>X / Twitter</span>
+                </div>
+                <div id="card-x-handle" class="text-white font-bold truncate">Not Entered</div>
+              </div>
+
+              <div class="border-l-2 border-[#27272a] pl-2 mt-1">
+                <div class="text-[9px] text-on-surface-variant uppercase">Highest Role</div>
+                <div id="card-role-name" class="font-display font-bold text-sm text-on-surface-variant truncate">NO ROLE</div>
+              </div>
+
+              <div class="border-l-2 border-[#27272a] pl-2 mt-1">
+                <div class="text-[9px] text-on-surface-variant uppercase">Joined Dlicom</div>
+                <div id="card-joined-date" class="font-display font-bold text-xs text-on-surface-variant truncate">Unlinked</div>
+              </div>
+
+              <div class="border-l-2 border-emerald-500 pl-2 mt-1">
+                <div class="text-[9px] text-on-surface-variant uppercase flex items-center justify-between pr-1">
+                  <span>Dlicom Impressions</span>
+                </div>
+                <div id="card-x-impressions" class="font-display font-bold text-xs text-emerald-400 truncate">--</div>
+              </div>
+
+              <div class="border-l-2 border-cyan-500 pl-2 mt-1">
+                <div class="text-[9px] text-on-surface-variant uppercase">Dlicom Posts / Eng</div>
+                <div id="card-x-posts" class="font-display font-bold text-xs text-cyan-400 truncate">--</div>
+              </div>
+            </div>
+
+            <!-- Active Character Design Summary -->
+            <div class="bg-[#0b0b0e] border border-[#27272a] p-2.5 mb-3">
+              <div class="font-mono-tech text-[9px] text-on-surface-variant uppercase mb-1">Active Character Design:</div>
+              <div id="card-character-summary" class="font-mono-tech text-xs text-white font-bold flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-on-surface-variant"></span>
+                <span id="card-character-name">Cadet Chassis // Mint Mist</span>
+              </div>
+            </div>
+
+            <!-- Custom Manifest Lore Quote -->
+            <div class="bg-[#08080b] border border-[#27272a] p-2.5 mb-4">
+              <p id="card-manifest-quote" class="font-body italic text-[11px] text-[#e5e2e1] leading-relaxed">
+                "Connect Discord to manifest your sovereign digital twin."
+              </p>
+            </div>
+
+            <!-- Bottom Barcode & Security Hash -->
+            <div class="flex justify-between items-end border-t border-[#27272a] pt-2.5">
+              <div class="flex gap-[2px] opacity-40">
+                <div class="w-1 h-3.5 bg-white"></div>
+                <div class="w-2 h-3.5 bg-white"></div>
+                <div class="w-1 h-3.5 bg-white"></div>
+                <div class="w-3 h-3.5 bg-white"></div>
+                <div class="w-1 h-3.5 bg-white"></div>
+                <div class="w-2 h-3.5 bg-white"></div>
+                <div class="w-1 h-3.5 bg-white"></div>
+              </div>
+              <span class="font-mono-tech text-[9px] text-on-surface-variant">HASH: 0x0000...0000 // VERIFIED</span>
+            </div>
+
+            <!-- Made for Dlicom Community Card Tag with Xerper Attribution -->
+            <div class="font-mono-tech text-[9px] text-on-surface-variant tracking-widest uppercase mt-3 pt-2 border-t border-[#27272a]/60 flex items-center justify-between">
+              <span>MADE FOR DLICOM COMMUNITY</span>
+              <span class="text-[8px] text-[#83958c] lowercase">dlicom x stats via xerper.com</span>
+            </div>
+
+          </div>
+
+          <!-- Action Buttons Group -->
+          <div class="w-full max-w-[420px] mt-6 space-y-3">
+            <!-- Copy Card Image (Clipboard) -->
+            <button id="btn-copy-card-image" class="brutalist-btn w-full bg-[#18181b] border border-[#3f3f46] hover:border-white text-white font-mono-tech font-bold text-xs py-3.5 px-4 uppercase flex justify-between items-center transition-all shadow-[0_0_15px_rgba(255,255,255,0.08)] cursor-pointer">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-base text-[#00ffc2]">content_copy</span>
+                <span>COPY CARD IMAGE (CLIPBOARD)</span>
+              </div>
+              <span class="text-[10px] text-[#83958c]">FOR X / DISCORD</span>
+            </button>
+
+            <!-- Download PNG -->
+            <button id="btn-download-card" class="brutalist-btn w-full bg-dliever-mint text-surface-deep font-mono-tech font-bold text-xs py-3.5 px-4 uppercase flex justify-between items-center cursor-pointer">
+              <span>DOWNLOAD MATRIX CARD (PNG)</span>
+              <span class="material-symbols-outlined text-base">download</span>
+            </button>
+
+            <!-- Share on X (Twitter) -->
+            <button id="btn-share-on-x" class="w-full bg-black border border-white/40 hover:border-white text-white font-mono-tech font-bold text-xs py-3 px-4 uppercase flex items-center justify-center gap-2 transition-colors cursor-pointer">
+              <span class="font-display font-bold">𝕏</span>
+              <span>SHARE ON X (PRE-FILLED TWEET)</span>
+            </button>
+
+            <!-- Copy URL -->
+            <button id="btn-copy-card-link" class="w-full bg-transparent border border-[#27272a] hover:border-dliever-mint text-on-surface-variant hover:text-dliever-mint font-mono-tech text-xs py-2.5 px-4 uppercase flex items-center justify-center gap-2 transition-colors cursor-pointer">
+              <span class="material-symbols-outlined text-sm">link</span>
+              <span>COPY MANIFEST LINK</span>
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container"></div>
+
+  <!-- Footer -->
+  <footer class="bg-[#08080a] border-t border-[#27272a] mt-auto py-8 relative z-20">
+    <div class="max-w-7xl mx-auto px-4 md:px-10 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
+      <div class="font-mono-tech text-xs text-on-surface-variant">
+        Made for Dlicom Community by a community member 
+        <a href="https://x.com/Crypto_Atanu" target="_blank" rel="noopener noreferrer" class="text-white hover:text-[#ec49c0] underline font-bold transition-colors">@Crypto_Atanu</a> 
+        (Discord: <span class="text-white font-bold">@nathbabu</span>)
+      </div>
+      <div class="font-mono-tech text-xs text-on-surface-variant">
+        <a href="https://x.com/DlicomApp" target="_blank" rel="noopener noreferrer" class="text-on-surface-variant hover:text-white transition-colors">@DlicomApp</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/shader.js"></script>
+  <script src="js/share-export.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
