@@ -8,8 +8,36 @@
   ],
   "routes": [
     {
+      "src": "/assets/(.*)",
+      "dest": "/assets/$1"
+    },
+    {
+      "src": "/css/(.*)",
+      "dest": "/css/$1"
+    },
+    {
+      "src": "/js/(.*)",
+      "dest": "/js/$1"
+    },
+    {
+      "src": "/api/(.*)",
+      "dest": "/server.js"
+    },
+    {
+      "src": "/c/(.*)",
+      "dest": "/server.js"
+    },
+    {
+      "src": "/card/(.*)",
+      "dest": "/server.js"
+    },
+    {
+      "src": "/",
+      "dest": "/index.html"
+    },
+    {
       "src": "/(.*)",
-      "dest": "server.js"
+      "dest": "/index.html"
     }
   ]
 }
