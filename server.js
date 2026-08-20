@@ -25,6 +25,15 @@ loadEnv();
 
 const PORT = parseInt(process.env.PORT || '8080', 10);
 const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
+function getDynamicBaseUrl(req) {
+  const host = req.headers['x-forwarded-host'] || req.headers.host;
+  const proto = req.headers['x-forwarded-proto'] || (host && host.includes('localhost') ? 'http' : 'https');
+  if (host) {
+    return `${proto}://${host}`;
+  }
+  return process.env.BASE_URL || 'https://dili-manifest-dlicom.vercel.app';
+}
+
 
 // Dlicom Official Guild Constants
 const DLICOM_GUILD_ID = process.env.DISCORD_GUILD_ID || '1460130124598087712';
@@ -400,7 +409,8 @@ const server = http.createServer(async (req, res) => {
         return;
       }
 
-      const redirectUri = `${BASE_URL}/api/auth/discord/callback`;
+      const dynamicBase = getDynamicBaseUrl(req);
+      const redirectUri = `${dynamicBase}/api/auth/discord/callback`;
       const discordAuthUrl = `https://discord.com/oauth2/authorize?client_id=${encodeURIComponent(DISCORD_CLIENT_ID)}&response_type=code&redirect_uri=${encodeURIComponent(redirectUri)}&scope=identify%20guilds%20guilds.members.read`;
 
       res.writeHead(302, { Location: discordAuthUrl });
@@ -420,7 +430,8 @@ const server = http.createServer(async (req, res) => {
       }
 
       try {
-        const redirectUri = `${BASE_URL}/api/auth/discord/callback`;
+        const dynamicBase = getDynamicBaseUrl(req);
+        const redirectUri = `${dynamicBase}/api/auth/discord/callback`;
 
         const tokenParams = new URLSearchParams({
           client_id: DISCORD_CLIENT_ID,
@@ -568,10 +579,28 @@ const server = http.createServer(async (req, res) => {
             <p>Dlicom Role: <strong>${detectedRole.toUpperCase()}</strong></p>
             <p>Member Since: <strong>${joinDate || "Active"}</strong></p>
             <script>
+              const authPayload = ${JSON.stringify(payload)};
               if (window.opener) {
-                window.opener.postMessage(${JSON.stringify(payload)}, '*');
+                try {
+                  window.opener.postMessage(authPayload, '*');
+                } catch(e) {}
+                setTimeout(() => { window.close(); }, 700);
+              } else {
+                // Mobile same-tab fallback: persist session directly and redirect to app
+                try {
+                  const existing = JSON.parse(localStorage.getItem('twin_manifest_session') || '{}');
+                  localStorage.setItem('twin_manifest_session', JSON.stringify(Object.assign(existing, {
+                    discordConnected: true,
+                    discordUsername: authPayload.username,
+                    discordAvatar: authPayload.avatar,
+                    discordUserId: authPayload.id,
+                    currentRole: authPayload.detectedRole,
+                    joinedServerDate: authPayload.joinDate,
+                    serverRoles: authPayload.roles
+                  })));
+                } catch (e) {}
+                window.location.href = '/';
               }
-              setTimeout(() => { window.close(); }, 800);
             </script>
           </body>
           </html>
