@@ -384,8 +384,11 @@ const ShareKit = (function() {
     shareToX: function(options) {
       const roleName = options.roleName || (options.roleInfo ? options.roleInfo.name : 'Dliever');
       const discordUser = options.discordUsername || 'Community Member';
+      const siteUrl = (window.location && window.location.origin && !window.location.origin.includes('localhost')) 
+        ? window.location.origin 
+        : 'https://dili-manifest-dlicom.vercel.app';
 
-      const tweetText = `Manifested my Sovereign Dili Twin with @DlicomApp! 🔮\n\nDiscord ID: ${discordUser} with Highest Role: ${roleName}\n\nMade via Dili Manifest Studio by @Crypto_Atanu\n\n#Dlicom #DiliManifest`;
+      const tweetText = `Manifested my Sovereign Dili Twin with @DlicomApp! 🔮\n\nDiscord: ${discordUser} | Rank: ${roleName}\n\nManifest yours here 👇\n${siteUrl}\n\nMade by @Crypto_Atanu #Dlicom #DiliManifest`;
 
       const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
       window.open(url, '_blank');
