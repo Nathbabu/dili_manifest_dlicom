@@ -479,6 +479,7 @@ const server = http.createServer(async (req, res) => {
               "1460231458143867011": "Verified",
               "1470656257168900149": "India",
               "1475388825583751189": "Events",
+              "1475392943178383502": "Giveaways",
               "1507289781208617010": "Raids"
             };
 
@@ -495,8 +496,8 @@ const server = http.createServer(async (req, res) => {
             userRoles = roleIds.map(rid => {
               if (roleMap.has(rid)) return roleMap.get(rid);
               if (DLICOM_KNOWN_ROLES[rid]) return DLICOM_KNOWN_ROLES[rid];
-              return rid;
-            });
+              return null;
+            }).filter(Boolean).filter(r => !/^\d{10,}$/.test(String(r).trim()) && r !== '@everyone');
 
             console.log(`[Discord OAuth] Resolved role names for ${fullUsername}:`, JSON.stringify(userRoles));
           } else {

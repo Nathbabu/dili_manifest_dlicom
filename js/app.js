@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
       state.user.discordUsername = sessionData.discordUsername || null;
       state.user.discordId = sessionData.discordId || null;
       state.user.discordAvatar = sessionData.discordAvatar || null;
-      state.user.serverRoles = sessionData.serverRoles || [];
+      state.user.serverRoles = (sessionData.serverRoles || []).map(r => r === '1475392943178383502' ? 'Giveaways' : r).filter(r => !/^\d{10,}$/.test(String(r).trim()) && r !== '@everyone');
       state.user.joinedServerDate = sessionData.joinedServerDate || null;
       state.user.currentRole = sessionData.currentRole || 'none';
       state.user.selectedCharacterId = sessionData.selectedCharacterId || (state.roles[state.user.currentRole] || state.roles.none).defaultCharacter;
@@ -223,8 +223,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Display Server Roles List in UI with Exact Discord Role Pill Colors
     const rolesListContainer = document.getElementById('discord-server-roles-list');
     if (rolesListContainer) {
-      if (isConnected && state.user.serverRoles && state.user.serverRoles.length > 0) {
-        const rolePillsHtml = state.user.serverRoles.map(roleName => {
+      const displayRoles = (state.user.serverRoles || []).map(r => r === '1475392943178383502' ? 'Giveaways' : r).filter(r => !/^\d{10,}$/.test(String(r).trim()) && r !== '@everyone');
+      if (isConnected && displayRoles.length > 0) {
+        const rolePillsHtml = displayRoles.map(roleName => {
           const rLower = String(roleName).toLowerCase();
           let dotColor = "bg-gray-400";
           let textColor = "text-[#ddd]";
@@ -577,7 +578,7 @@ document.addEventListener('DOMContentLoaded', () => {
       state.user.discordConnected = true;
       state.user.discordUsername = data.username;
       state.user.discordId = data.id;
-      state.user.serverRoles = data.roles || [];
+      state.user.serverRoles = (data.roles || []).map(r => r === '1475392943178383502' ? 'Giveaways' : r).filter(r => !/^\d{10,}$/.test(String(r).trim()) && r !== '@everyone');
       if (data.joinDate) state.user.joinedServerDate = data.joinDate;
       if (data.avatar) state.user.discordAvatar = data.avatar;
 
