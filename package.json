@@ -1,0 +1,27 @@
+{
+  "name": "twin-manifest-web3-social",
+  "version": "2.4.0",
+  "description": "Twin Manifest - Dlicom Web3 Social Platform Cyber-Zine Application",
+  "main": "index.html",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "serve": "npx serve ."
+  },
+  "keywords": [
+    "web3",
+    "social",
+    "cyber-zine",
+    "neon-brutalism",
+    "dlicom"
+  ],
+  "author": "Dlicom Protocol",
+  "license": "MIT",
+  "devDependencies": {
+    "vite": "^5.4.0"
+  },
+  "dependencies": {
+    "pngjs": "^7.0.0"
+  }
+}

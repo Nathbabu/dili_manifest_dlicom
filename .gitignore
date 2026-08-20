@@ -1,0 +1,28 @@
+# Environment Variables & Secrets (CRITICAL)
+.env
+.env.*
+.env.local
+.env.production
+
+# Dependencies
+node_modules/
+
+# Test & Prototype Files
+testsprite_tests/
+TESTSPRITE_FRONTEND_TEST_PLAN.md
+test-*.js
+raw-screens/
+handpicked-ledger.json
+temp_new_stitch/
+
+# Logs & Debugging
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# OS & System
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
