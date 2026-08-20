@@ -258,9 +258,7 @@ const ShareKit = (function() {
 
       ctx.font = '12px "JetBrains Mono", monospace';
       ctx.fillStyle = '#83958c';
-      ctx.textAlign = 'right';
-      ctx.fillText("X DATA POWERED BY XERPER.COM", 1080, 1513);
-      ctx.textAlign = 'left';
+      
     } else {
       ctx.font = 'bold 14px "JetBrains Mono", monospace';
       ctx.fillStyle = colorTheme;
@@ -268,9 +266,7 @@ const ShareKit = (function() {
       
       ctx.font = '12px "JetBrains Mono", monospace';
       ctx.fillStyle = '#83958c';
-      ctx.textAlign = 'right';
-      ctx.fillText("X DATA POWERED BY XERPER.COM", 1080, 1513);
-      ctx.textAlign = 'left';
+      
     }
 
     return canvas;
@@ -313,32 +309,58 @@ const ShareKit = (function() {
 
   return {
     copyCardImage: function(options, callback) {
-      loadAssetsAndRender(options, (canvas) => {
-        if (!navigator.clipboard || !navigator.clipboard.write) {
-          if (callback) callback(false, "Clipboard image copying is not supported on this browser.");
-          return;
-        }
-        canvas.toBlob((blob) => {
-          if (!blob) {
-            if (callback) callback(false, "Failed to render card image.");
-            return;
-          }
+      if (!navigator.clipboard || !navigator.clipboard.write) {
+        if (callback) callback(false, "Clipboard image copying is not supported on this browser. Use Download PNG instead!");
+        return;
+      }
+
+      // Create Promise for the blob immediately to preserve user activation context in Chrome/Safari/Edge
+      const blobPromise = new Promise((resolve, reject) => {
+        loadAssetsAndRender(options, (canvas) => {
           try {
-            navigator.clipboard.write([
-              new ClipboardItem({ 'image/png': blob })
-            ]).then(() => {
+            canvas.toBlob((blob) => {
+              if (blob) resolve(blob);
+              else reject(new Error("Canvas render failed"));
+            }, 'image/png');
+          } catch (e) {
+            reject(e);
+          }
+        });
+      });
+
+      try {
+        const item = new ClipboardItem({ 'image/png': blobPromise });
+        navigator.clipboard.write([item]).then(() => {
+          CyberAudio.success();
+          if (callback) callback(true);
+        }).catch((err) => {
+          console.warn('Clipboard promise write error, trying direct fallback:', err);
+          blobPromise.then(blob => {
+            const directItem = new ClipboardItem({ 'image/png': blob });
+            navigator.clipboard.write([directItem]).then(() => {
               CyberAudio.success();
               if (callback) callback(true);
-            }).catch((err) => {
-              console.warn('Clipboard write error:', err);
-              if (callback) callback(false, err.message);
+            }).catch((err2) => {
+              console.warn('Direct fallback clipboard error:', err2);
+              if (callback) callback(false, "Clipboard access was blocked by browser. Please use Download PNG!");
             });
-          } catch (err) {
-            console.warn('ClipboardItem error:', err);
-            if (callback) callback(false, err.message);
-          }
-        }, 'image/png');
-      });
+          }).catch(err3 => {
+            if (callback) callback(false, err3.message);
+          });
+        });
+      } catch (err) {
+        console.warn('ClipboardItem constructor error:', err);
+        blobPromise.then(blob => {
+          navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]).then(() => {
+            CyberAudio.success();
+            if (callback) callback(true);
+          }).catch((err2) => {
+            if (callback) callback(false, err2.message);
+          });
+        }).catch(err3 => {
+          if (callback) callback(false, err3.message);
+        });
+      }
     },
 
     downloadCard: function(options) {
