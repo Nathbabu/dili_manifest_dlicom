@@ -66,9 +66,7 @@ const ShareKit = (function() {
     // 5. Header: Dili Manifest Logo & Dlicom Official Logo
     if (options.twinManifestLogo && options.twinManifestLogo.complete) {
       ctx.drawImage(options.twinManifestLogo, 90, 100, 64, 64);
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-      ctx.lineWidth = 1.5;
-      ctx.strokeRect(90, 100, 64, 64);
+      // Clean circular logo without square stroke
     }
 
     const textStartX = options.twinManifestLogo && options.twinManifestLogo.complete ? 170 : 90;
@@ -93,10 +91,20 @@ const ShareKit = (function() {
     ctx.fillStyle = colorTheme;
     ctx.fillText(badgeText, 1090 - badgeWidth + 16, 142);
 
-    // Official Dlicom White Logo beside Role Badge
+    // Official Dlicom Logo with Glowing Cyber Badge
     if (options.dlicomLogo && options.dlicomLogo.complete) {
-      const dlicomX = 1090 - badgeWidth - 52;
-      ctx.drawImage(options.dlicomLogo, dlicomX, 116, 36, 36);
+      const dlicomBoxW = 145;
+      const dlicomBoxX = 1090 - badgeWidth - dlicomBoxW - 20;
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.08)';
+      ctx.fillRect(dlicomBoxX, 110, dlicomBoxW, 48);
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(dlicomBoxX, 110, dlicomBoxW, 48);
+      
+      ctx.drawImage(options.dlicomLogo, dlicomBoxX + 12, 116, 36, 36);
+      ctx.font = 'bold 18px "JetBrains Mono", monospace';
+      ctx.fillStyle = '#ffffff';
+      ctx.fillText("DLICOM", dlicomBoxX + 54, 141);
     }
 
     // 6. Mascot Display Box
@@ -251,10 +259,10 @@ const ShareKit = (function() {
     ctx.strokeRect(90, 1485, 1020, 45);
 
     if (options.dlicomLogo && options.dlicomLogo.complete) {
-      ctx.drawImage(options.dlicomLogo, 110, 1496, 22, 22);
+      ctx.drawImage(options.dlicomLogo, 110, 1494, 26, 26);
       ctx.font = 'bold 14px "JetBrains Mono", monospace';
       ctx.fillStyle = colorTheme;
-      ctx.fillText("MADE FOR DLICOM COMMUNITY", 142, 1513);
+      ctx.fillText("MADE FOR DLICOM COMMUNITY", 148, 1513);
 
       ctx.font = '12px "JetBrains Mono", monospace';
       ctx.fillStyle = '#83958c';
