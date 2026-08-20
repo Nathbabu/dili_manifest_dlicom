@@ -152,11 +152,7 @@ const ShareKit = (function() {
       ctx.restore();
     }
 
-    // Subtle Scanlines
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.22)';
-    for (let y = imgBoxY; y < imgBoxY + imgBoxH; y += 8) {
-      ctx.fillRect(imgBoxX, y, imgBoxW, 3);
-    }
+// Crisp clean mascot without scanlines
 
     // 7. Identity & Resonance Data Grid
     const dataY = 900;
