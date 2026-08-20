@@ -281,17 +281,32 @@ const ShareKit = (function() {
   }
 
   function loadAssetsAndRender(options, callback) {
-    const characterImg = new Image();
-    characterImg.crossOrigin = "anonymous";
-    characterImg.src = options.characterImgSrc || "assets/characters/cadet-base.png";
+    // Check if we can reuse already loaded DOM images for instant synchronous rendering
+    const domMascot = document.getElementById('card-mascot-image');
+    const domLogo = document.querySelector('img[alt="Dili Manifest Logo"]');
+    const domDlicom = document.querySelector('img[alt="Dlicom Official Logo"]') || document.querySelector('img[alt="Dlicom"]');
 
-    const twinManifestLogo = new Image();
-    twinManifestLogo.crossOrigin = "anonymous";
-    twinManifestLogo.src = "assets/dili-manifest-logo.png";
+    const characterImg = (domMascot && domMascot.complete && domMascot.naturalWidth > 0 && domMascot.src.includes(options.characterImgSrc || ''))
+      ? domMascot
+      : new Image();
 
-    const dlicomLogo = new Image();
-    dlicomLogo.crossOrigin = "anonymous";
-    dlicomLogo.src = "assets/dlicom-logo.png";
+    const twinManifestLogo = (domLogo && domLogo.complete && domLogo.naturalWidth > 0)
+      ? domLogo
+      : new Image();
+
+    const dlicomLogo = (domDlicom && domDlicom.complete && domDlicom.naturalWidth > 0)
+      ? domDlicom
+      : new Image();
+
+    // If all images are already available from DOM, render immediately
+    if (characterImg.complete && twinManifestLogo.complete && dlicomLogo.complete && characterImg.naturalWidth > 0) {
+      options.characterImg = characterImg;
+      options.twinManifestLogo = twinManifestLogo;
+      options.dlicomLogo = dlicomLogo;
+      const canvas = renderCardToCanvas(options);
+      callback(canvas);
+      return;
+    }
 
     let loadedCount = 0;
     const totalImages = 3;
@@ -307,68 +322,83 @@ const ShareKit = (function() {
       }
     };
 
-    characterImg.onload = onImageDone;
-    characterImg.onerror = onImageDone;
-    twinManifestLogo.onload = onImageDone;
-    twinManifestLogo.onerror = onImageDone;
-    dlicomLogo.onload = onImageDone;
-    dlicomLogo.onerror = onImageDone;
+    if (!characterImg.complete) {
+      characterImg.onload = onImageDone;
+      characterImg.onerror = onImageDone;
+      characterImg.src = options.characterImgSrc || "assets/characters/cadet-base.png";
+    } else {
+      loadedCount++;
+    }
+
+    if (!twinManifestLogo.complete) {
+      twinManifestLogo.onload = onImageDone;
+      twinManifestLogo.onerror = onImageDone;
+      twinManifestLogo.src = "assets/dili-manifest-logo.png";
+    } else {
+      loadedCount++;
+    }
+
+    if (!dlicomLogo.complete) {
+      dlicomLogo.onload = onImageDone;
+      dlicomLogo.onerror = onImageDone;
+      dlicomLogo.src = "assets/dlicom-logo.png";
+    } else {
+      loadedCount++;
+    }
+
+    if (loadedCount >= totalImages) {
+      options.characterImg = characterImg;
+      options.twinManifestLogo = twinManifestLogo;
+      options.dlicomLogo = dlicomLogo;
+      const canvas = renderCardToCanvas(options);
+      callback(canvas);
+    }
   }
 
   return {
     copyCardImage: function(options, callback) {
       if (!navigator.clipboard || !navigator.clipboard.write) {
-        if (callback) callback(false, "Clipboard image copying is not supported on this browser. Use Download PNG instead!");
+        // Fallback to direct download if clipboard API is not available
+        ShareKit.downloadCard(options);
+        if (callback) callback(false, "Clipboard not supported on this browser. Downloaded PNG instead!");
         return;
       }
 
-      // Create Promise for the blob immediately to preserve user activation context in Chrome/Safari/Edge
-      const blobPromise = new Promise((resolve, reject) => {
-        loadAssetsAndRender(options, (canvas) => {
-          try {
-            canvas.toBlob((blob) => {
-              if (blob) resolve(blob);
-              else reject(new Error("Canvas render failed"));
-            }, 'image/png');
-          } catch (e) {
-            reject(e);
-          }
-        });
-      });
+      loadAssetsAndRender(options, (canvas) => {
+        try {
+          canvas.toBlob(async (blob) => {
+            if (!blob) {
+              ShareKit.downloadCard(options);
+              if (callback) callback(false, "Canvas export error. Downloaded PNG instead!");
+              return;
+            }
 
-      try {
-        const item = new ClipboardItem({ 'image/png': blobPromise });
-        navigator.clipboard.write([item]).then(() => {
-          CyberAudio.success();
-          if (callback) callback(true);
-        }).catch((err) => {
-          console.warn('Clipboard promise write error, trying direct fallback:', err);
-          blobPromise.then(blob => {
-            const directItem = new ClipboardItem({ 'image/png': blob });
-            navigator.clipboard.write([directItem]).then(() => {
+            try {
+              const item = new ClipboardItem({ 'image/png': blob });
+              await navigator.clipboard.write([item]);
               CyberAudio.success();
               if (callback) callback(true);
-            }).catch((err2) => {
-              console.warn('Direct fallback clipboard error:', err2);
-              if (callback) callback(false, "Clipboard access was blocked by browser. Please use Download PNG!");
-            });
-          }).catch(err3 => {
-            if (callback) callback(false, err3.message);
-          });
-        });
-      } catch (err) {
-        console.warn('ClipboardItem constructor error:', err);
-        blobPromise.then(blob => {
-          navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]).then(() => {
-            CyberAudio.success();
-            if (callback) callback(true);
-          }).catch((err2) => {
-            if (callback) callback(false, err2.message);
-          });
-        }).catch(err3 => {
-          if (callback) callback(false, err3.message);
-        });
-      }
+            } catch (clipErr) {
+              console.warn('Direct clipboard write blocked, trying fallback:', clipErr);
+              try {
+                // Try writing item with promise
+                const promiseItem = new ClipboardItem({ 'image/png': Promise.resolve(blob) });
+                await navigator.clipboard.write([promiseItem]);
+                CyberAudio.success();
+                if (callback) callback(true);
+              } catch (clipErr2) {
+                console.error('All clipboard attempts failed:', clipErr2);
+                ShareKit.downloadCard(options);
+                if (callback) callback(false, "Browser blocked clipboard access. Downloaded card as PNG!");
+              }
+            }
+          }, 'image/png');
+        } catch (e) {
+          console.error('toBlob error:', e);
+          ShareKit.downloadCard(options);
+          if (callback) callback(false, "Canvas security error. Downloaded card as PNG!");
+        }
+      });
     },
 
     downloadCard: function(options) {
