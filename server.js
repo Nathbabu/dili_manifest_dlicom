@@ -85,7 +85,7 @@ const MIME_TYPES = {
 
 const server = http.createServer(async (req, res) => {
   try {
-    const parsedUrl = url.parse(req.url, true);
+    const parsedUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
     const pathname = parsedUrl.pathname;
 
     // CORS Headers
@@ -146,7 +146,7 @@ const server = http.createServer(async (req, res) => {
 
     // 2. REAL DISCORD BOT SEARCH & MEMBER LOOKUP (Method 2)
     if (pathname === '/api/member' || pathname === '/api/discord/fetch') {
-      const query = (parsedUrl.query.username || parsedUrl.query.query || '').trim();
+      const query = (parsedUrl.searchParams.get('username') || parsedUrl.searchParams.get('query') || '').trim();
 
       if (!query) {
         const errResp = JSON.stringify({ success: false, error: 'Please enter a Dlicom Discord username or User ID' });
@@ -291,7 +291,7 @@ const server = http.createServer(async (req, res) => {
 
     // 3. X / TWITTER ANALYTICS VIA XERPER.COM (STRICTLY DLICOM COMMUNITY PROJECT)
     if (pathname === '/api/x/analytics') {
-      const username = (parsedUrl.query.username || parsedUrl.query.handle || '').trim().replace(/^@/, '');
+      const username = (parsedUrl.searchParams.get('username') || parsedUrl.searchParams.get('handle') || '').trim().replace(/^@/, '');
       if (!username) {
         const errResp = JSON.stringify({ success: false, error: 'Username is required' });
         res.writeHead(400, { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(errResp) });
@@ -420,7 +420,7 @@ const server = http.createServer(async (req, res) => {
 
     // 4. DISCORD OAUTH2 CALLBACK
     if (pathname === '/api/auth/discord/callback') {
-      const code = parsedUrl.query.code;
+      const code = parsedUrl.searchParams.get('code');
 
       if (!code) {
         const msg = '<script>alert("Discord login cancelled."); window.close();</script>';
