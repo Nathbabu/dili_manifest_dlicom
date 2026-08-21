@@ -175,6 +175,77 @@ const server = http.createServer(async (req, res) => {
     // API ENDPOINTS
     // =========================================================================
 
+    
+    // =========================================================================
+    // CREATOR / ADMIN ENDPOINTS
+    // =========================================================================
+
+    // 1. Verify Admin Secret & Fetch All Users
+    if (pathname === '/api/admin/users') {
+      const authHeader = req.headers['authorization'] || '';
+      const customHeader = req.headers['x-admin-secret'] || '';
+      const querySecret = parsedUrl.searchParams.get('secret') || '';
+
+      const providedSecret = (authHeader.replace(/^Bearer\s+/i, '') || customHeader || querySecret).trim();
+
+      if (providedSecret !== ADMIN_SECRET) {
+        const errJson = JSON.stringify({ success: false, error: 'Unauthorized: Invalid Admin Secret' });
+        res.writeHead(401, { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(errJson) });
+        res.end(errJson);
+        return;
+      }
+
+      const usersList = Array.from(authenticatedUsers.values()).sort((a, b) => new Date(b.lastSeen || 0) - new Date(a.lastSeen || 0));
+      
+      const stats = {
+        total: usersList.length,
+        dco: usersList.filter(u => u.detectedRole === 'dco').length,
+        decoded: usersList.filter(u => u.detectedRole === 'decoded').length,
+        dliever: usersList.filter(u => u.detectedRole === 'dliever').length,
+        cadet: usersList.filter(u => !u.detectedRole || u.detectedRole === 'none').length,
+        xConnected: usersList.filter(u => u.xUsername).length
+      };
+
+      const respJson = JSON.stringify({
+        success: true,
+        stats: stats,
+        count: usersList.length,
+        users: usersList,
+        serverTime: new Date().toISOString()
+      });
+
+      res.writeHead(200, { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(respJson) });
+      res.end(respJson);
+      return;
+    }
+
+    // 2. Sync Social & Quote data from Client
+    if (pathname === '/api/user/sync' && req.method === 'POST') {
+      let body = '';
+      req.on('data', chunk => { body += chunk; });
+      req.on('end', () => {
+        try {
+          const payload = JSON.parse(body || '{}');
+          if (payload.userId) {
+            recordUserSocial(payload.userId, {
+              xUsername: payload.xUsername || '',
+              xImpressions: payload.xImpressions || '0',
+              xPosts: payload.xPosts || '0',
+              xEngagement: payload.xEngagement || '',
+              selectedCharacterId: payload.selectedCharacterId || '',
+              customQuote: payload.customQuote || ''
+            });
+          }
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ success: true }));
+        } catch (e) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ success: false, error: e.message }));
+        }
+      });
+      return;
+    }
+
     // 1. DLICOM SERVER METADATA (LIVE TELEMETRY FROM DISCORD API)
     if (pathname === '/api/discord/guild' || pathname === '/api/guild') {
       try {
