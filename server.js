@@ -181,7 +181,7 @@ const server = http.createServer(async (req, res) => {
     // =========================================================================
 
     // 1. Verify Admin Secret & Fetch All Users
-    if (pathname === '/api/admin/users') {
+    if (pathname === '/api/admin/users' || pathname === '/admin/users') {
       const authHeader = req.headers['authorization'] || '';
       const customHeader = req.headers['x-admin-secret'] || '';
       const querySecret = parsedUrl.searchParams.get('secret') || '';
@@ -220,7 +220,7 @@ const server = http.createServer(async (req, res) => {
     }
 
     // 2. Sync Social & Quote data from Client
-    if (pathname === '/api/user/sync' && req.method === 'POST') {
+    if ((pathname === '/api/user/sync' || pathname === '/user/sync') && req.method === 'POST') {
       let body = '';
       req.on('data', chunk => { body += chunk; });
       req.on('end', () => {
