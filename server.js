@@ -72,67 +72,75 @@ async function getDlicomGuildRoles(botToken) {
 // Helper: Content-Type mapper
 
 // =========================================================================
-// CREATOR / ADMIN LOGGING SYSTEM
+// CREATOR / ADMIN LOGGING SYSTEM (UPSTASH REDIS CLOUD DATABASE)
 // =========================================================================
 const ADMIN_SECRET = process.env.ADMIN_SECRET || 'dlicom_creator_2026';
-const USERS_STORE_FILE = path.join(__dirname, 'data', 'authenticated_users.json');
+const UPSTASH_REDIS_REST_URL = process.env.UPSTASH_REDIS_REST_URL || 'https://positive-cub-88368.upstash.io';
+const UPSTASH_REDIS_REST_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN || 'gQAAAAAAAVkwAAIgcDE3ZWY3ZWM2YWVlYjE0NDNkYWQ1ZTRiZGQ5ZWRmZWY3OA';
 
-// In-memory cache for fast lookups
+// In-memory cache for fast instant lookups
 let authenticatedUsers = new Map();
 
-function loadStoredUsers() {
+async function loadStoredUsers() {
+  if (!UPSTASH_REDIS_REST_URL || !UPSTASH_REDIS_REST_TOKEN) return;
   try {
-    const dataDir = path.join(__dirname, 'data');
-    if (!fs.existsSync(dataDir)) {
-      fs.mkdirSync(dataDir, { recursive: true });
-    }
-    if (fs.existsSync(USERS_STORE_FILE)) {
-      const raw = fs.readFileSync(USERS_STORE_FILE, 'utf8');
-      const arr = JSON.parse(raw);
-      if (Array.isArray(arr)) {
-        arr.forEach(u => {
-          if (u && u.id) authenticatedUsers.set(u.id, u);
-        });
+    const res = await fetch(`${UPSTASH_REDIS_REST_URL}/get/dlicom_manifest_users`, {
+      headers: { Authorization: `Bearer ${UPSTASH_REDIS_REST_TOKEN}` }
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data.result) {
+        const arr = typeof data.result === 'string' ? JSON.parse(data.result) : data.result;
+        if (Array.isArray(arr)) {
+          arr.forEach(u => {
+            if (u && u.id) authenticatedUsers.set(u.id, u);
+          });
+          console.log(`[Upstash Redis] Loaded ${authenticatedUsers.size} persistent users from Cloud DB!`);
+        }
       }
     }
   } catch (e) {
-    console.warn('[Admin Store] Could not load persisted users:', e.message);
+    console.warn('[Upstash Redis] Could not fetch users from Upstash:', e.message);
   }
 }
 
-function persistStoredUsers() {
+async function persistStoredUsers() {
+  if (!UPSTASH_REDIS_REST_URL || !UPSTASH_REDIS_REST_TOKEN) return;
   try {
-    const dataDir = path.join(__dirname, 'data');
-    if (!fs.existsSync(dataDir)) {
-      fs.mkdirSync(dataDir, { recursive: true });
-    }
     const arr = Array.from(authenticatedUsers.values()).sort((a, b) => new Date(b.lastSeen || 0) - new Date(a.lastSeen || 0));
-    fs.writeFileSync(USERS_STORE_FILE, JSON.stringify(arr, null, 2), 'utf8');
+    await fetch(`${UPSTASH_REDIS_REST_URL}/set/dlicom_manifest_users`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${UPSTASH_REDIS_REST_TOKEN}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(arr)
+    });
   } catch (e) {
-    console.warn('[Admin Store] Could not persist users to file:', e.message);
+    console.warn('[Upstash Redis] Could not persist users to Upstash:', e.message);
   }
 }
 
-function recordUserAuth(userData) {
+async function recordUserAuth(userData) {
   if (!userData || !userData.id) return;
+  await loadStoredUsers();
   const existing = authenticatedUsers.get(userData.id) || {};
   const updated = Object.assign({}, existing, userData, {
     authCount: (existing.authCount || 0) + 1,
     lastSeen: new Date().toISOString()
   });
   authenticatedUsers.set(userData.id, updated);
-  persistStoredUsers();
-  console.log(`[Admin Store] Tracked user: ${updated.username} (${updated.id}) - Role: ${updated.detectedRole}`);
+  await persistStoredUsers();
+  console.log(`[Upstash Redis] Successfully tracked user in Cloud DB: ${updated.username} (${updated.id})`);
 }
 
-function recordUserSocial(userId, socialData) {
+async function recordUserSocial(userId, socialData) {
   if (!userId) return;
-  const existing = authenticatedUsers.get(userId);
-  if (existing) {
-    Object.assign(existing, socialData, { lastSeen: new Date().toISOString() });
-    authenticatedUsers.set(userId, existing);
-    persistStoredUsers();
-  }
+  await loadStoredUsers();
+  const existing = authenticatedUsers.get(userId) || { id: userId, username: userId };
+  Object.assign(existing, socialData, { lastSeen: new Date().toISOString() });
+  authenticatedUsers.set(userId, existing);
+  await persistStoredUsers();
 }
 
 loadStoredUsers();
@@ -194,6 +202,9 @@ const server = http.createServer(async (req, res) => {
         res.end(errJson);
         return;
       }
+
+      // Refresh latest from Cloud DB
+      await loadStoredUsers();
 
       const usersList = Array.from(authenticatedUsers.values()).sort((a, b) => new Date(b.lastSeen || 0) - new Date(a.lastSeen || 0));
       
