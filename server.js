@@ -489,6 +489,10 @@ const server = http.createServer(async (req, res) => {
   "1476002791246790848": "DCO",
   "1476002283404791918": "Dcoded",
   "1470656257168900149": "Dliever",
+  "1460137587095240805": "Team",
+  "1484302812589457640": "Mod",
+  "1476001794546073743": "Regional Lead",
+  "1486866119825555588": "Regional Helper",
   "1468480824595972202": "OG",
   "1502308949888864480": "Ambassador",
   "1491120963516108820": "Beta Tester",
@@ -562,17 +566,21 @@ const server = http.createServer(async (req, res) => {
         const rawRoleIds = roleIds.map(id => String(id).trim());
         const roleStrings = userRoles.map(r => String(r).toLowerCase().trim());
 
-        // 1. DCO Tier (Tier 3 - Sovereign - Highest Rank)
-        const isDCO = rawRoleIds.includes("1476002791246790848") || 
-                      roleStrings.some(r => r === 'dco' || r.includes('dco sovereign') || r.includes('dco core'));
+        // 1. DCO / Team / Mod Tier (Tier 3 - Sovereign - Highest Rank)
+        const isDCO = rawRoleIds.includes("1476002791246790848") || // DCO
+                      rawRoleIds.includes("1460137587095240805") || // Team
+                      rawRoleIds.includes("1484302812589457640") || // Mod
+                      roleStrings.some(r => r === 'dco' || r.includes('dco sovereign') || r.includes('dco core') || r === 'team' || r === 'mod' || r === 'moderator');
 
-        // 2. Dcoded Tier (Tier 2)
-        const isDecoded = rawRoleIds.includes("1476002283404791918") || 
-                          roleStrings.some(r => r.includes('decoded') || r.includes('dcoded') || r.includes('d-coded'));
+        // 2. Dcoded / Regional Lead Tier (Tier 2)
+        const isDecoded = rawRoleIds.includes("1476002283404791918") || // Dcoded
+                          rawRoleIds.includes("1476001794546073743") || // Regional Lead
+                          roleStrings.some(r => r.includes('decoded') || r.includes('dcoded') || r.includes('d-coded') || r.includes('regional lead'));
 
-        // 3. Dliever Tier (Tier 1)
-        const isDliever = rawRoleIds.includes("1470656257168900149") || 
-                          roleStrings.some(r => r.includes('dliever') || r.includes('deliver') || r.includes('d-liever'));
+        // 3. Dliever / Regional Helper Tier (Tier 1)
+        const isDliever = rawRoleIds.includes("1470656257168900149") || // Dliever
+                          rawRoleIds.includes("1486866119825555588") || // Regional Helper
+                          roleStrings.some(r => r.includes('dliever') || r.includes('deliver') || r.includes('d-liever') || r.includes('regional helper'));
 
         if (isDCO) {
           detectedRole = 'dco';
