@@ -1,5 +1,33 @@
 // Dili Manifest - Single-Page Controller (25-Character Matrix + LocalStorage Persistence)
 document.addEventListener('DOMContentLoaded', () => {
+  
+  // Fetch Real-time Live Discord Server Stats
+  async function fetchDiscordLiveStats() {
+    try {
+      const res = await fetch('https://discord.com/api/v10/invites/dlicom?with_counts=true');
+      if (res.ok) {
+        const data = await res.json();
+        const onlineCount = data.approximate_presence_count;
+        const memberCount = data.approximate_member_count;
+
+        const onlineEl = document.getElementById('discord-live-online');
+        const membersEl = document.getElementById('discord-live-members');
+
+        if (onlineEl && onlineCount) {
+          onlineEl.textContent = Number(onlineCount).toLocaleString();
+        }
+        if (membersEl && memberCount) {
+          membersEl.textContent = Number(memberCount).toLocaleString();
+        }
+      }
+    } catch (err) {
+      console.warn('Could not fetch live Discord stats:', err);
+    }
+  }
+
+  fetchDiscordLiveStats();
+  setInterval(fetchDiscordLiveStats, 60000);
+
   // Initialize Background Shader
   CyberShader.init('cyber-shader-canvas');
 
