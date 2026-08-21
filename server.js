@@ -485,14 +485,28 @@ const server = http.createServer(async (req, res) => {
 
             // Map known Dlicom role IDs to readable names
             const DLICOM_KNOWN_ROLES = {
-              "1494043518736531648": "Dliever",
-              "1494043592887373976": "Dlicom App User",
-              "1460231458143867011": "Verified",
-              "1470656257168900149": "India",
-              "1475388825583751189": "Events",
-              "1475392943178383502": "Giveaways",
-              "1507289781208617010": "Raids"
-            };
+  "1476002791246790848": "DCO",
+  "1476002283404791918": "Dcoded",
+  "1470656257168900149": "Dliever",
+  "1468480824595972202": "OG",
+  "1502308949888864480": "Ambassador",
+  "1491120963516108820": "Beta Tester",
+  "1497099943872172214": "Verified AirDroper",
+  "1507289781208617010": "Dlicom App User",
+  "1460231458143867011": "Verified",
+  "1494043592887373976": "Raids",
+  "1494043518736531648": "Events",
+  "1475388825583751189": "India",
+  "1471667384828952669": "Arabic",
+  "1475390589884305479": "Bangladesh",
+  "1501972315737686026": "Indonesian",
+  "1475392943178383502": "Nigeria",
+  "1475393753144627241": "Turkey",
+  "1475391724770693161": "Vietnamese",
+  "1460230882538291387": "Russian",
+  "1475386273706279015": "Ukraine",
+  "1492160868228792330": "Chinese"
+};
 
             // If bot token is available, get live roles from guild; otherwise use known map
             let roleMap = new Map();
@@ -544,10 +558,20 @@ const server = http.createServer(async (req, res) => {
         const roleDecodedEnv = (process.env.ROLE_DECODED_ID || 'DECODED').toLowerCase();
         const roleDlieverEnv = (process.env.ROLE_DLIEVER_ID || 'DLIEVER').toLowerCase();
 
+        const rawRoleIds = roleIds.map(id => String(id).trim());
         const roleStrings = userRoles.map(r => String(r).toLowerCase().trim());
-        const isDCO = roleStrings.some(r => r === 'dco' || r === roleDcoEnv || r.startsWith('dco ') || r.endsWith(' dco') || r.includes(' dco ') || r.includes('dco sovereign') || r.includes('dco core'));
-        const isDecoded = roleStrings.some(r => r === roleDecodedEnv || r.includes('decoded') || r.includes('dcoded') || r.includes('d-coded'));
-        const isDliever = roleStrings.some(r => r === roleDlieverEnv || r === '1494043518736531648' || r.includes('dliever') || r.includes('deliver') || r.includes('d-liever'));
+
+        // 1. DCO Tier (Tier 3 - Sovereign - Highest Rank)
+        const isDCO = rawRoleIds.includes("1476002791246790848") || 
+                      roleStrings.some(r => r === 'dco' || r.includes('dco sovereign') || r.includes('dco core'));
+
+        // 2. Dcoded Tier (Tier 2)
+        const isDecoded = rawRoleIds.includes("1476002283404791918") || 
+                          roleStrings.some(r => r.includes('decoded') || r.includes('dcoded') || r.includes('d-coded'));
+
+        // 3. Dliever Tier (Tier 1)
+        const isDliever = rawRoleIds.includes("1470656257168900149") || 
+                          roleStrings.some(r => r.includes('dliever') || r.includes('deliver') || r.includes('d-liever'));
 
         if (isDCO) {
           detectedRole = 'dco';

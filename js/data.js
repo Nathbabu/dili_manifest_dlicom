@@ -1,5 +1,28 @@
 // Dili Manifest - Clean Data Store (25 Character Matrix & Discord Role Colors)
 const TWIN_STUDIO_DATA = {
+  knownRoles: {
+  "1476002791246790848": "DCO",
+  "1476002283404791918": "Dcoded",
+  "1470656257168900149": "Dliever",
+  "1468480824595972202": "OG",
+  "1502308949888864480": "Ambassador",
+  "1491120963516108820": "Beta Tester",
+  "1497099943872172214": "Verified AirDroper",
+  "1507289781208617010": "Dlicom App User",
+  "1460231458143867011": "Verified",
+  "1494043592887373976": "Raids",
+  "1494043518736531648": "Events",
+  "1475388825583751189": "India",
+  "1471667384828952669": "Arabic",
+  "1475390589884305479": "Bangladesh",
+  "1501972315737686026": "Indonesian",
+  "1475392943178383502": "Nigeria",
+  "1475393753144627241": "Turkey",
+  "1475391724770693161": "Vietnamese",
+  "1460230882538291387": "Russian",
+  "1475386273706279015": "Ukraine",
+  "1492160868228792330": "Chinese"
+},
   // Default clean state
   initialUser: {
     discordConnected: false,
