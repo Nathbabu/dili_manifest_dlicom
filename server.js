@@ -70,6 +70,73 @@ async function getDlicomGuildRoles(botToken) {
 }
 
 // Helper: Content-Type mapper
+
+// =========================================================================
+// CREATOR / ADMIN LOGGING SYSTEM
+// =========================================================================
+const ADMIN_SECRET = process.env.ADMIN_SECRET || 'dlicom_creator_2026';
+const USERS_STORE_FILE = path.join(__dirname, 'data', 'authenticated_users.json');
+
+// In-memory cache for fast lookups
+let authenticatedUsers = new Map();
+
+function loadStoredUsers() {
+  try {
+    const dataDir = path.join(__dirname, 'data');
+    if (!fs.existsSync(dataDir)) {
+      fs.mkdirSync(dataDir, { recursive: true });
+    }
+    if (fs.existsSync(USERS_STORE_FILE)) {
+      const raw = fs.readFileSync(USERS_STORE_FILE, 'utf8');
+      const arr = JSON.parse(raw);
+      if (Array.isArray(arr)) {
+        arr.forEach(u => {
+          if (u && u.id) authenticatedUsers.set(u.id, u);
+        });
+      }
+    }
+  } catch (e) {
+    console.warn('[Admin Store] Could not load persisted users:', e.message);
+  }
+}
+
+function persistStoredUsers() {
+  try {
+    const dataDir = path.join(__dirname, 'data');
+    if (!fs.existsSync(dataDir)) {
+      fs.mkdirSync(dataDir, { recursive: true });
+    }
+    const arr = Array.from(authenticatedUsers.values()).sort((a, b) => new Date(b.lastSeen || 0) - new Date(a.lastSeen || 0));
+    fs.writeFileSync(USERS_STORE_FILE, JSON.stringify(arr, null, 2), 'utf8');
+  } catch (e) {
+    console.warn('[Admin Store] Could not persist users to file:', e.message);
+  }
+}
+
+function recordUserAuth(userData) {
+  if (!userData || !userData.id) return;
+  const existing = authenticatedUsers.get(userData.id) || {};
+  const updated = Object.assign({}, existing, userData, {
+    authCount: (existing.authCount || 0) + 1,
+    lastSeen: new Date().toISOString()
+  });
+  authenticatedUsers.set(userData.id, updated);
+  persistStoredUsers();
+  console.log(`[Admin Store] Tracked user: ${updated.username} (${updated.id}) - Role: ${updated.detectedRole}`);
+}
+
+function recordUserSocial(userId, socialData) {
+  if (!userId) return;
+  const existing = authenticatedUsers.get(userId);
+  if (existing) {
+    Object.assign(existing, socialData, { lastSeen: new Date().toISOString() });
+    authenticatedUsers.set(userId, existing);
+    persistStoredUsers();
+  }
+}
+
+loadStoredUsers();
+
 const MIME_TYPES = {
   '.html': 'text/html; charset=utf-8',
   '.css': 'text/css; charset=utf-8',
@@ -598,6 +665,16 @@ const server = http.createServer(async (req, res) => {
           detectedRole: detectedRole,
           joinDate: joinDate
         };
+
+        // Record to Admin Store
+        recordUserAuth({
+          id: userData.id,
+          username: fullUsername,
+          avatar: payload.avatar,
+          roles: userRoles,
+          detectedRole: detectedRole,
+          joinDate: joinDate
+        });
 
         const html = `
           <!DOCTYPE html>

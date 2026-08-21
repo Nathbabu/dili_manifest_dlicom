@@ -48,7 +48,29 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   // LocalStorage Persistence
+  
+  // Sync User Stats & Socials to Creator Admin Store
+  function syncUserToAdmin() {
+    if (!state.user.discordId) return;
+    try {
+      fetch('/api/user/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: state.user.discordId,
+          xUsername: state.user.xUsername,
+          xImpressions: state.user.xDlicomImpressions,
+          xPosts: state.user.xDlicomPosts,
+          xEngagement: state.user.xEngagementRate,
+          selectedCharacterId: state.user.selectedCharacterId,
+          customQuote: state.user.customQuote
+        })
+      }).catch(() => {});
+    } catch (e) {}
+  }
+
   function saveSession() {
+    syncUserToAdmin();
     try {
       const sessionData = {
         discordConnected: state.user.discordConnected,
