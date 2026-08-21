@@ -89,6 +89,7 @@ async function loadStoredUsers() {
     });
     if (res.ok) {
       const data = await res.json();
+      authenticatedUsers.clear();
       if (data.result) {
         const arr = typeof data.result === 'string' ? JSON.parse(data.result) : data.result;
         if (Array.isArray(arr)) {
