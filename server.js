@@ -461,6 +461,7 @@ const server = http.createServer(async (req, res) => {
           ? `${userData.username}#${userData.discriminator}`
           : (userData.global_name || userData.username);
 
+        let roleIds = [];
         let userRoles = [];
         let detectedRole = 'none';
 
@@ -471,7 +472,7 @@ const server = http.createServer(async (req, res) => {
           });
           if (memberRes.ok) {
             const memberData = await memberRes.json();
-            const roleIds = memberData.roles || [];
+            roleIds = memberData.roles || [];
             
             if (memberData.joined_at) {
               const d = new Date(memberData.joined_at);
