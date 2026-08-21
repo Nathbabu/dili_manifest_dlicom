@@ -4,18 +4,6 @@
     {
       "source": "/admin",
       "destination": "/admin.html"
-    },
-    {
-      "source": "/api/:path*",
-      "destination": "/api/index.js"
-    },
-    {
-      "source": "/c/:path*",
-      "destination": "/api/index.js"
-    },
-    {
-      "source": "/card/:path*",
-      "destination": "/api/index.js"
     }
   ]
 }
